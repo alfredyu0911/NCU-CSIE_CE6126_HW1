@@ -6,9 +6,197 @@
 //  Copyright © 2018年 Alfred. All rights reserved.
 //
 
+#include <fstream>
 #include "FuzzyRulesBase.hpp"
 #include "AllConstant.hpp"
 #include "Geometry.hpp"
+
+FuzzyRulesBase::FuzzyRulesBase()
+{
+    vHD_L_l.clear();
+    vHD_L_n.clear();
+    vHD_L_v.clear();
+    vHD_R_l.clear();
+    vHD_R_n.clear();
+    vHD_R_v.clear();
+    vVDR_c.clear();
+    vVDR_n.clear();
+    vVDR_l.clear();
+    vWA_L_exL.clear();
+    vWA_L_L.clear();
+    vWA_L_M.clear();
+    vWA_L_S.clear();
+    vWA_L_exS.clear();
+    vWA_R_exS.clear();
+    vWA_R_S.clear();
+    vWA_R_M.clear();
+    vWA_R_L.clear();
+    vWA_R_exL.clear();
+
+    m_bDefaultFlag = true;
+}
+
+bool FuzzyRulesBase::loadRuleSetting(string strPath)
+{
+    ifstream file(strPath, ios::in);
+    string strLine;
+    bool bIsLoadFail=false;
+
+    // HD L_little
+    if ( getline(file, strLine) )
+        vHD_L_l = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // HD L_normal
+    if ( getline(file, strLine) )
+        vHD_L_n = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // HD L_very
+    if ( getline(file, strLine) )
+        vHD_L_v = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // HD R_little
+    if ( getline(file, strLine) )
+        vHD_R_l = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // HD R_normal
+    if ( getline(file, strLine) )
+        vHD_R_n = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // HD R_very
+    if ( getline(file, strLine) )
+        vHD_R_v = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // VDR critical
+    if ( getline(file, strLine) )
+        vVDR_c = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // VDR normal
+    if ( getline(file, strLine) )
+        vVDR_n = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // VDR large
+    if ( getline(file, strLine) )
+        vVDR_l = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA L_exLarge
+    if ( getline(file, strLine) )
+        vWA_L_exL = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA L_Large
+    if ( getline(file, strLine) )
+        vWA_L_L = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA L_Medium
+    if ( getline(file, strLine) )
+        vWA_L_M = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA L_Small
+    if ( getline(file, strLine) )
+        vWA_L_S = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA L_exSmall
+    if ( getline(file, strLine) )
+        vWA_L_exS = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA R_exSmall
+    if ( getline(file, strLine) )
+        vWA_R_exS = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA R_Small
+    if ( getline(file, strLine) )
+        vWA_R_S = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA R_Medium
+    if ( getline(file, strLine) )
+        vWA_R_M = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA R_Large
+    if ( getline(file, strLine) )
+        vWA_R_L = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // WA R_exLarge
+    if ( getline(file, strLine) )
+        vWA_R_exL = parserSetting(strLine);
+    else
+        bIsLoadFail = true;
+
+    // 載入失敗則套用預設設定.
+    return !(m_bDefaultFlag = (bIsLoadFail == true) ? true : false);
+}
+
+vector<Point> FuzzyRulesBase::parserSetting(string strLine)
+{
+    vector<Point> res;
+    res.clear();
+
+    strLine.erase(0, strLine.find(' ')+1);
+    strLine.erase(0, strLine.find(' ')+1);
+
+    while ( strLine.find(' ') != string::npos )
+    {
+        string strPt = strLine.substr(0, strLine.find(' '));
+        strLine.erase(0, strLine.find(' ')+1);
+        Point pt = stringToPoint(strPt, ",");
+        res.push_back(pt);
+    }
+    Point pt = stringToPoint(strLine, ",");
+    res.push_back(pt);
+
+    return res;
+}
+
+Point FuzzyRulesBase::stringToPoint(string strPoint, string strGap)
+{
+    Point pt_res;
+    pt_res.x = 0.0;
+    pt_res.y = 0.0;
+
+    if ( strPoint.find(strGap) == string::npos )
+        return pt_res;
+
+    pt_res.x = stod(strPoint.substr(0, strPoint.find(strGap)));
+    strPoint.erase(0, strPoint.find(strGap)+strGap.length());
+
+    pt_res.y = stod(strPoint.substr(0, strPoint.find(strGap)));
+
+    return pt_res;
+}
 
 vector<FuzzyRulesResult> FuzzyRulesBase::searchAllRules(float X, float Y)
 {
@@ -233,18 +421,186 @@ WheelAngle FuzzyRulesBase::fuzzyRule_GetResultByCondition(HorizontalDeviate Cond
 
 void FuzzyRulesBase::getMembershipFuncOfWheelAngle(WheelAngle WA, float &center, float &width_L, float &width_R)
 {
-    float gap = (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX) / WHEEL_ANGLE_GAP_NUMBER;
-    float temp = (float)WA * gap;
-    float width = gap / 2.0;
-    
-    width_L = width_R = width;
-    center = (temp > 0.0) ? (temp - width) : (temp + width);
+    if ( m_bDefaultFlag == true )
+    {
+        float gap = (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX) / WHEEL_ANGLE_GAP_NUMBER;
+        float temp = (float)WA * gap;
+        float width = gap / 2.0;
+
+        width_L = width_R = width;
+        center = (temp > 0.0) ? (temp - width) : (temp + width);
+        return;
+    }
+
+    vector<Point> vSetting;
+    switch ( WA )
+    {
+    case WA_left_exLarge:
+        vSetting = vWA_L_exL;
+        break;
+    case WA_left_large:
+        vSetting = vWA_L_L;
+        break;
+    case WA_left_medium:
+        vSetting = vWA_L_M;
+        break;
+    case WA_left_little:
+        vSetting = vWA_L_S;
+        break;
+    case WA_left_exLittle:
+        vSetting = vWA_L_exS;
+        break;
+    case WA_right_exLittle:
+        vSetting = vWA_R_exS;
+        break;
+    case WA_right_little:
+        vSetting = vWA_R_S;
+        break;
+    case WA_right_medium:
+        vSetting = vWA_R_M;
+        break;
+    case WA_right_large:
+        vSetting = vWA_R_L;
+        break;
+    case WA_right_exLarge:
+        vSetting = vWA_R_exL;
+        break;
+    default:
+        return;
+    }
+
+    Point ptL, ptC, ptR;
+
+    // find the center point
+    bool centerFound = false;
+    vector<Point>::iterator it;
+    for ( it=vSetting.begin() ; it != vSetting.end() ; it++ )
+    {
+        Point pt = (*it);
+        if ( pt.y == 1.0 )
+        {
+            centerFound = true;
+            break;
+        }
+    }
+
+    // something wrong
+    if ( centerFound == false )
+    {
+        center = 0;
+        width_L = width_R = 40;
+        return;
+    }
+
+    // center found
+    ptC = *(it);
+
+    // find next right point
+    if ( it == vSetting.end()-1 )   // no right point exist
+    {
+        ptR = ptC;
+    }
+    else
+    {
+        bool rightFound = false;
+        for ( vector<Point>::iterator it2=it ; it2 != vSetting.end() ; it2++ )
+        {
+            Point pt = (*it2);
+            if ( pt.y == 0.0 )
+            {
+                ptR = pt;
+                rightFound = true;
+                break;
+            }
+        }
+
+        if ( rightFound == false )
+        {
+            ptR = *(vSetting.end()-1);
+        }
+    }
+
+    // find next left point
+    if ( it == vSetting.begin() )       // no left point exist
+    {
+        ptL = ptC;
+    }
+    else
+    {
+        bool leftFound = false;
+        for ( vector<Point>::iterator it2=it ; it2 != vSetting.begin()-1 ; it2-- )
+        {
+            Point pt = (*it2);
+            if ( pt.y == 0.0 )
+            {
+                ptL = pt;
+                leftFound = true;
+                break;
+            }
+        }
+
+        if ( leftFound == false )
+        {
+            ptL = *(vSetting.begin());
+        }
+    }
+
+    center = ptC.x;
+    width_L = ptC.x - ptL.x;
+    width_R = ptR.x - ptC.x;
+
+    return;
+}
+
+float FuzzyRulesBase::getAlphaFromSetting(float distance_of_left_Subtract_right, vector<Point> vSetting)
+{
+    float X = distance_of_left_Subtract_right;
+
+    vector<Point>::iterator it1=vSetting.begin(), it2=it1+1;
+    while ( it2 != vSetting.end() )
+    {
+        Point pt1 = (*it1);
+        Point pt2 = (*it2);
+
+        if ( pt1.x == pt2.x )
+        {
+            it1++;
+            it2++;
+            continue;
+        }
+
+        if ( X == pt1.x || X == pt2.x )
+        {
+            return max(pt1.y, pt2.y);
+        }
+        else if ( X < pt1.x )
+        {
+            return pt1.y;
+        }
+        else if ( X >= pt1.x && X < pt2.x )
+        {
+            Point ptStart = pt1;
+            Point ptEnd = pt2;
+            // y - y' = m(x - x')  ->  y = m(x - x') + y'
+            float m = (ptEnd.y - ptStart.y) / (ptEnd.x - ptStart.x);   // 斜率.
+
+            return m * (X - ptStart.x) + ptStart.y;
+        }
+
+        it1++;
+        it2++;
+    }
+
+    Point pt1 = (*it1);
+    return pt1.y;
 }
 
 float FuzzyRulesBase::horizontallyDeviate_left_little(float distance_of_left_Subtract_right)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance_of_left_Subtract_right, vHD_L_l);
     float X = distance_of_left_Subtract_right;
-    
+
     if ( X < -2.0 )
     {
         return 0.0;
@@ -272,6 +628,8 @@ float FuzzyRulesBase::horizontallyDeviate_left_little(float distance_of_left_Sub
 
 float FuzzyRulesBase::horizontallyDeviate_left_normal(float distance_of_left_Subtract_right)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance_of_left_Subtract_right, vHD_L_n);
     float X = distance_of_left_Subtract_right;
     
     if ( X < -5.0 )
@@ -308,6 +666,8 @@ float FuzzyRulesBase::horizontallyDeviate_left_normal(float distance_of_left_Sub
 
 float FuzzyRulesBase::horizontallyDeviate_left_very(float distance_of_left_Subtract_right)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance_of_left_Subtract_right, vHD_L_v);
     float X = distance_of_left_Subtract_right;
     
     if ( X < -6.0 )
@@ -333,6 +693,8 @@ float FuzzyRulesBase::horizontallyDeviate_left_very(float distance_of_left_Subtr
 
 float FuzzyRulesBase::horizontallyDeviate_right_little(float distance_of_left_Subtract_right)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance_of_left_Subtract_right, vHD_R_l);
     float X = distance_of_left_Subtract_right;
     
     if ( X < 0.0 )
@@ -362,6 +724,8 @@ float FuzzyRulesBase::horizontallyDeviate_right_little(float distance_of_left_Su
 
 float FuzzyRulesBase::horizontallyDeviate_right_normal(float distance_of_left_Subtract_right)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance_of_left_Subtract_right, vHD_R_n);
     float X = distance_of_left_Subtract_right;
     
     if ( X < 1.0 )
@@ -398,6 +762,8 @@ float FuzzyRulesBase::horizontallyDeviate_right_normal(float distance_of_left_Su
 
 float FuzzyRulesBase::horizontallyDeviate_right_very(float distance_of_left_Subtract_right)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance_of_left_Subtract_right, vHD_R_v);
     float X = distance_of_left_Subtract_right;
     
     if ( X < 3.0 )
@@ -423,6 +789,8 @@ float FuzzyRulesBase::horizontallyDeviate_right_very(float distance_of_left_Subt
 
 float FuzzyRulesBase::verticalDistanceRemain_critical(float distance)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance, vVDR_c);
     float X = distance;
     
     if ( X < 13.0 )
@@ -448,6 +816,8 @@ float FuzzyRulesBase::verticalDistanceRemain_critical(float distance)
 
 float FuzzyRulesBase::verticalDistanceRemain_normal(float distance)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance, vVDR_n);
     float X = distance;
     
     if ( X < 16.0 )
@@ -488,6 +858,8 @@ float FuzzyRulesBase::verticalDistanceRemain_normal(float distance)
 
 float FuzzyRulesBase::verticalDistanceRemain_large(float distance)
 {
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(distance, vVDR_l);
     float X = distance;
     
     if ( X < 20.0 )
@@ -513,52 +885,72 @@ float FuzzyRulesBase::verticalDistanceRemain_large(float distance)
 
 float FuzzyRulesBase::WheelAngle_left_exLarge(float degree)
 {
-    return WheelAngle_generalize(degree, -40, -32, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_L_exL);
+    return WheelAngle_generalize(degree, -40, -26.67, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_left_large(float degree)
 {
-    return WheelAngle_generalize(degree, -32, -24, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_L_L);
+    return WheelAngle_generalize(degree, -33.33, -20, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_left_medium(float degree)
 {
-    return WheelAngle_generalize(degree, -24, -16, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_L_M);
+    return WheelAngle_generalize(degree, -26.67, -13.33, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_left_little(float degree)
 {
-    return WheelAngle_generalize(degree, -16, -8, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_L_S);
+    return WheelAngle_generalize(degree, -20, -6.67, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_left_exLittle(float degree)
 {
-    return WheelAngle_generalize(degree, -8, 0, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_L_exS);
+    return WheelAngle_generalize(degree, -13.33, 0, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_right_exLittle(float degree)
 {
-    return WheelAngle_generalize(degree, 0, 8, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_R_exS);
+    return WheelAngle_generalize(degree, 0, 13.33, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_right_little(float degree)
 {
-    return WheelAngle_generalize(degree, 8, 16, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_R_S);
+    return WheelAngle_generalize(degree, 6.67, 20, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_right_medium(float degree)
 {
-    return WheelAngle_generalize(degree, 16, 24, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_R_M);
+    return WheelAngle_generalize(degree, 13.33, 26.67, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_right_large(float degree)
 {
-    return WheelAngle_generalize(degree, 24, 32, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_R_L);
+    return WheelAngle_generalize(degree, 20, 33.33, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_right_exLarge(float degree)
 {
-    return WheelAngle_generalize(degree, 32, 40, (WHEEL_ANGLE_RIGHT_MAX - WHEEL_ANGLE_LEFT_MAX)/WHEEL_ANGLE_GAP_NUMBER/2);
+    if ( m_bDefaultFlag == false )
+        return getAlphaFromSetting(degree, vWA_R_exL);
+    return WheelAngle_generalize(degree, 26.67, 40, 6.67);
 }
 
 float FuzzyRulesBase::WheelAngle_generalize(float degree, float boundL, float boundR, float intervalLR)

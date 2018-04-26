@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <string>
+#include "Geometry.hpp"
 
 using namespace std;
 
@@ -54,6 +55,8 @@ typedef struct stFuzzyRulesResult
 class FuzzyRulesBase
 {
 public:
+    FuzzyRulesBase();
+
     /*
      比對符合的模糊規則(啟動強度為零者視為不符合)
      回傳所有符合的模糊規則，以及各自的啟動強度
@@ -83,6 +86,8 @@ public:
     string getDebugString(WheelAngle WA);
     string getDebugString_HD(HorizontalDeviate HD);
     string getDebugString_VDR(VerticalDistanceRemain VDR);
+
+    bool loadRuleSetting(string strPath);
     
 protected:
     // Condition A
@@ -110,6 +115,8 @@ protected:
     float WheelAngle_right_little(float degree);
     float WheelAngle_right_exLittle(float degree);
 
+    float getAlphaFromSetting(float distance_of_left_Subtract_right, vector<Point> vSetting);
+
 public:
     // Condition L
     float leftDistanceRemain_normal(float distance);
@@ -120,6 +127,17 @@ public:
     float rightDistanceRemain_critical(float distance);
     
     float WheelAngle_generalize(float degree, float boundL, float boundR, float interval_LR);
+
+private:
+    vector<Point> vHD_L_l, vHD_L_n, vHD_L_v, vHD_R_l, vHD_R_n, vHD_R_v;
+    vector<Point> vVDR_c, vVDR_n, vVDR_l;
+    vector<Point> vWA_L_exL, vWA_L_L, vWA_L_M, vWA_L_S, vWA_L_exS;
+    vector<Point> vWA_R_exS, vWA_R_S, vWA_R_M, vWA_R_L, vWA_R_exL;
+
+    Point stringToPoint(string strPoint, string strGap);
+    vector<Point> parserSetting(string strLine);
+
+    bool m_bDefaultFlag;
 };
 
 #endif /* FuzzyRulesBase_hpp */

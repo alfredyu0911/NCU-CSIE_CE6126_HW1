@@ -1,1 +1,3 @@
-# NCU-CSIE_CE6126_HW1_test
+# NCU CSIE
+## CE6126
+### Homework 01

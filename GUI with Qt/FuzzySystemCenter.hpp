@@ -14,7 +14,7 @@
 class FuzzySystemCenter
 {
 public:
-    FuzzySystemCenter();
+    FuzzySystemCenter(FuzzyRulesBase *rule) { m_rulesObj = rule; }
     ~FuzzySystemCenter();
     
     float FuzzySystemFinalResult(float sensorLeft, float sensorRight, float sensorFront);

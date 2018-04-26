@@ -6,13 +6,13 @@
 //  Copyright © 2018年 Alfred. All rights reserved.
 //
 
-#include <QDebug>
 #include "AllConstant.hpp"
 #include "CarObject.hpp"
 #include "FuzzySystemCenter.hpp"
 
 CarObject::CarObject()
 {
+    m_lastFuzzyRuleResult_wheelAngle = 0.0;
 }
 
 CarObject::~CarObject()
@@ -26,7 +26,7 @@ void CarObject::autopilotSystemTackControl()
     float dR = geoObj.getDistance(m_data->m_carPosition, m_data->m_intersectPt_R) - CAR_INIT_LENGHT;
     float dF = geoObj.getDistance(m_data->m_carPosition, m_data->m_intersectPt_F) - CAR_INIT_LENGHT;
 
-    FuzzySystemCenter *sys = new FuzzySystemCenter();
+    FuzzySystemCenter *sys = new FuzzySystemCenter(m_rule);
     m_lastFuzzyRuleResult_wheelAngle = sys->FuzzySystemFinalResult(dL, dR, dF);
     
     Degree degree(m_lastFuzzyRuleResult_wheelAngle);

@@ -20,7 +20,7 @@ using namespace std;
 class CarObject
 {
 public:
-    CarObject(SystemDataCenter *data) { m_data = data; }
+    CarObject(SystemDataCenter *data, FuzzyRulesBase *rule) { m_data = data; m_rule = rule; }
     virtual ~CarObject();
     
     /*
@@ -39,6 +39,7 @@ public:
 protected:
     CarObject();
     SystemDataCenter *m_data;
+    FuzzyRulesBase *m_rule;
 };
 
 #endif /* CarObject_hpp */

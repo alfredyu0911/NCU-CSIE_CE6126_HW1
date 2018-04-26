@@ -23,9 +23,7 @@ Initializer::Initializer(string fileFullPath)
 
 bool Initializer::loadData(string fileFullPath)
 {
-    setlocale(LC_ALL,"Chinese-simplified");
-    ifstream road(fileFullPath.c_str(), ios::in);
-    setlocale(LC_ALL,"C");
+    ifstream road(fileFullPath, ios::in);
     string strCarCoordinateInfo, strDestinationAreaLeftTop, strDestinationAreaRightBottom, strBorderInfo;
     
     if ( !(road >> strCarCoordinateInfo) )
@@ -81,20 +79,10 @@ bool Initializer::parserEndZone(string strStart, string strEnd)
     leftTop = stringToPoint(strStart, ",");
     rightBottom = stringToPoint(strEnd, ",");
     
-    // 以下暫時.
-    ofstream ofsroad("endZone.txt", ios::out);
-    
     Point p1 = Point(leftTop.x, leftTop.y);
     Point p2 = Point(rightBottom.x, leftTop.y);
     Point p3 = Point(rightBottom.x, rightBottom.y);
     Point p4 = Point(leftTop.x, rightBottom.y);
-    
-    ofsroad << p1.x << " " << p1.y << endl;
-    ofsroad << p2.x << " " << p2.y << endl;
-    ofsroad << p3.x << " " << p3.y << endl;
-    ofsroad << p4.x << " " << p4.y << endl;
-    ofsroad << p1.x << " " << p1.y << endl;
-    // 以上暫時.
     
     m_vEndZoneInfo.clear();
     m_vEndZoneInfo.push_back(p1);
