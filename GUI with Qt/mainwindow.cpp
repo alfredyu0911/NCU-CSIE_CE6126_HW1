@@ -440,7 +440,7 @@ void MainWindow::doMove()
     m_carObj->move();
     allCompoentRefresh();
 
-    if ( isCarReachEndZone() == true )
+    if ( isCarReachEndZone() == true || m_carObj->collisionCheck() )
     {
         m_btn_startUntilEnd->setEnabled(false);
         m_btn_startOneUnit->setEnabled(false);

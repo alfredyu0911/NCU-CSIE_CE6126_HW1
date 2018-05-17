@@ -122,6 +122,46 @@ public:
         return sqrt(pow(pt2.x-pt1.x, 2.0) + pow(pt2.y-pt1.y, 2.0));
     }
 
+    // https://stackoverflow.com/a/6853926
+    float minDistanceFromPointToLine(float ptX, float ptY, float line1X, float line1Y, float line2X, float line2Y)
+    {
+        float A = ptX - line1X;
+        float B = ptY - line1Y;
+        float C = line2X - line1X;
+        float D = line2Y - line1Y;
+
+        float dot = A * C + B * D;
+        float len_sq = C * C + D * D;
+        float param = -1;
+
+        //in case of 0 length line
+        if (len_sq != 0)
+            param = dot / len_sq;
+
+        float xx, yy;
+
+        if (param < 0)
+        {
+            xx = line1X;
+            yy = line1Y;
+        }
+        else if (param > 1)
+        {
+            xx = line2X;
+            yy = line2Y;
+        }
+        else
+        {
+            xx = line1X + param * C;
+            yy = line1Y + param * D;
+        }
+
+        float dx = ptX - xx;
+        float dy = ptY - yy;
+
+        return sqrt(dx * dx + dy * dy);
+    }
+
 }Geometry;
 
 #endif /* Geometry_hpp */

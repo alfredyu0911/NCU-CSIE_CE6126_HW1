@@ -57,6 +57,21 @@ void CarObject::move()
     m_data->m_carAngle.setAsRadians(Phi);
 }
 
+bool CarObject::collisionCheck()
+{
+    vector<Point> vBorder = m_data->m_vTrackBorderInfo;
+    for ( vector<Point>::iterator it=vBorder.begin()+1 ; it != vBorder.end() ; it++ )
+    {
+        Point p1 = *(it-1);
+        Point p2 = *(it);
 
+        Geometry geoObj;
+        float dis = geoObj.minDistanceFromPointToLine(m_data->m_carPosition.x, m_data->m_carPosition.y, p1.x, p1.y, p2.x, p2.y);
+        if ( dis <= CAR_INIT_LENGHT )
+            return true;
+    }
+
+    return false;
+}
 
 

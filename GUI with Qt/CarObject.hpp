@@ -34,6 +34,8 @@ public:
      */
     void move();
 
+    bool collisionCheck();
+
     float m_lastFuzzyRuleResult_wheelAngle;
     
 protected:
