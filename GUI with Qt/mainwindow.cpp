@@ -108,6 +108,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         if ( m_btn_startOneUnit->isEnabled() )
         {
             m_data->m_carWheelAngle = Degree(m_operateWheelAngle);
+            m_carObj->m_lastFuzzyRuleResult_wheelAngle = m_operateWheelAngle;
             m_carObj->move();
             allCompoentRefresh();
 

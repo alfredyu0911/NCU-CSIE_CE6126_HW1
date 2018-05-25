@@ -10,11 +10,6 @@
 #include "CarObject.hpp"
 #include "FuzzySystemCenter.hpp"
 
-CarObject::CarObject()
-{
-    m_lastFuzzyRuleResult_wheelAngle = 0.0;
-}
-
 CarObject::~CarObject()
 {
 }

@@ -20,7 +20,13 @@ using namespace std;
 class CarObject
 {
 public:
-    CarObject(SystemDataCenter *data, FuzzyRulesBase *rule) { m_data = data; m_rule = rule; }
+    CarObject(SystemDataCenter *data, FuzzyRulesBase *rule)
+    {
+        m_data = data;
+        m_rule = rule;
+        m_lastFuzzyRuleResult_wheelAngle = 0.0;
+    }
+
     virtual ~CarObject();
     
     /*
